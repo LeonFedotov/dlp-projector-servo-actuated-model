@@ -27,23 +27,23 @@ var options = {
 
 // pulse lengths in microseconds (theoretically, 1.5 ms
 // is the middle of a typical servo's range)
-var pulseLengths = [1300, 1500, 1700];
-var steeringChannel = 0;
+var speed = 1300;
 
 
 // variables used in servoLoop
 var pwm;
-var nextPulse = 0;
+var current = -1;
 var timer;
 
 
 // loop to cycle through pulse lengths
 function servoLoop() {
     timer = setTimeout(servoLoop, 500);
-    for(let i = 0; i<16;i++) {
-        pwm.setPulseLength(i, pulseLengths[nextPulse]);
-    }
-    nextPulse = (nextPulse + 1) % pulseLengths.length;
+    pwm.setPulseLength(current, 1300);
+    setTimeout(((current) => { //stop current in one seconds time
+        return () => pwm.setPulseLength(current, 1500);
+    }(current)), 1000);
+    current = current >= 15 ? 0 : current+1;
 }
 
 
